@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌤️ Cute Weather App</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 15px;
+      color: #ff6ec4;
+    }
+
+    input {
+      padding: 12px 15px;
+      font-size: 1em;
+      width: 80%;
+      border-radius: 12px;
+      border: 2px dashed #ffa4a4;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    button {
+      background: #ffa4a4;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #ff6ec4;
+    }
+
+    .weather {
+      margin-top: 20px;
+      background: #fff0f5;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 10px #ffd1dc;
+    }
+
+    .emoji {
+      font-size: 2rem;
+    }
+
+    @media screen and (max-width: 500px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      input, button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>☀️ Cute Weather App</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name..." />
+    <br>
+    <button onclick="getWeather()">✨ Get Weather</button>
+    <div id="weatherResult" class="weather"></div>
+  </div>
+
+  <script>
+    const apiKey = "60f8d48d59b3d6c0ecbdb680276532ae";
+
+    function getWeather() {
+      const city = document.getElementById("cityInput").value.trim();
+      if (!city) {
+        alert("Please enter a city name 🌍");
+        return;
+      }
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.cod === 200 || data.cod === "200") {
+            const emoji = getEmoji(data.weather[0].main);
+            const weatherHTML = `
+              <h2>${data.name} ${emoji}</h2>
+              <p><strong>🌡️ Temp:</strong> ${data.main.temp}°C</p>
+              <p><strong>🌥️ Condition:</strong> ${data.weather[0].description}</p>
+              <p><strong>💧 Humidity:</strong> ${data.main.humidity}%</p>
+              <p><strong>🌬️ Wind:</strong> ${data.wind.speed} m/s</p>
+            `;
+            document.getElementById("weatherResult").innerHTML = weatherHTML;
+          } else {
+            document.getElementById("weatherResult").innerHTML = "🌧️ City not found!";
+          }
+        })
+        .catch(error => {
+          document.getElementById("weatherResult").innerHTML = "😢 Error fetching weather";
+          console.error("Error:", error);
+        });
+    }
+
+    function getEmoji(condition) {
+      const map = {
+        Clear: "☀️",
+        Clouds: "☁️",
+        Rain: "🌧️",
+        Drizzle: "🌦️",
+        Thunderstorm: "⛈️",
+        Snow: "❄️",
+        Mist: "🌫️"
+      };
+      return map[condition] || "🌡️";
+    }
+  </script>
+</body>
+</html>
